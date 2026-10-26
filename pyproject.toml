@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pdf-ocr-md-local-converter"
+version = "0.1.0"
+description = "Local, private PDF -> Markdown converter (OCR, tables, charts) so Claude Cowork reads cheap Markdown instead of PDFs."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10,<3.14"
+authors = [{ name = "Sayak Chandra" }]
+dependencies = [
+    "docling>=2.140,<3",
+    "onnxruntime>=1.17",
+    "ocrmac>=1.0; sys_platform == 'darwin'",
+    "pypdfium2>=4.30",
+    "pillow>=10",
+    "watchdog>=4",
+    "mcp>=1.10",
+    "tomli>=2; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+tesseract = ["tesserocr>=2.7"]
+easyocr = ["easyocr>=1.7"]
+dev = ["pytest>=8", "reportlab>=4", "matplotlib>=3.8"]
+
+[project.scripts]
+pdf2md = "pdf2md.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: runs the real Docling models (downloads ~500 MB on first run)"]

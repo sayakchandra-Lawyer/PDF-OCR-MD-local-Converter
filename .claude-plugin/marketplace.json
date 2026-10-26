@@ -1,0 +1,17 @@
+{
+  "name": "pdf-ocr-md-local",
+  "owner": {
+    "name": "Sayak Chandra"
+  },
+  "metadata": {
+    "description": "Plugins for the PDF-OCR-MD-local-Converter project."
+  },
+  "plugins": [
+    {
+      "name": "pdf-markdown-first",
+      "source": "./claude-plugin",
+      "description": "Read locally converted Markdown instead of PDFs (skill + read hook).",
+      "version": "0.1.0"
+    }
+  ]
+}

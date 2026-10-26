@@ -1,0 +1,17 @@
+{
+  "description": "Redirect reads of converted PDFs to their local Markdown versions (pdf2md).",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/pdf_read_guard.py\" || python \"${CLAUDE_PLUGIN_ROOT}/hooks/pdf_read_guard.py\"",
+            "timeout": 200
+          }
+        ]
+      }
+    ]
+  }
+}

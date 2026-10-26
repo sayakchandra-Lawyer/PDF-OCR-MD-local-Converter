@@ -1,0 +1,49 @@
+# pdf2md configuration - edit and restart the watcher (pdf2md autostart restart).
+
+# Folders the background watcher monitors. Each sub-folder of a project_parent is one project.
+[watch]
+project_parents = []
+projects = []
+use_polling = false
+rescan_minutes = 10.0
+settle_seconds = 3.0
+
+# Where converted files go inside each project folder, and how PDFs are named.
+[layout]
+pdf_dir = "PDF"
+md_dir = "MD"
+context_dir = "01_Context"
+move_pdfs = "top-level"
+name_template = "{stem}"
+ignore_dirs = ["04_Archive", "node_modules", ".git", "__pycache__"]
+write_claude_md = true
+include_headers_footers = false
+
+# OCR for scanned / image-only pages. engine: auto | vlm | ocrmac | rapidocr | tesseract | easyocr
+[ocr]
+engine = "auto"
+languages = ["en"]
+redo_existing_text_layer = true
+vlm_crosscheck = true
+min_crosscheck_recall = 0.55
+vlm_dpi = 200
+
+# Table structure recognition: accurate | fast
+[tables]
+mode = "accurate"
+
+# Charts, diagrams and images: described by the local vision model.
+[figures]
+describe = true
+min_area = 0.02
+marker_only = ["logo", "icon", "signature", "stamp", "bar_code", "qr_code", "page_thumbnail"]
+save_images = true
+
+# Local vision LLM served by Ollama (https://ollama.com). Nothing leaves your machine.
+[llm]
+ollama_url = "http://127.0.0.1:11434"
+vision_model = "qwen3-vl:8b-instruct"
+ocr_model = ""
+timeout_seconds = 600.0
+keep_alive = "15m"
+num_ctx = 16384
