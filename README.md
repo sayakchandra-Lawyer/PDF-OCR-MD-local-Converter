@@ -225,6 +225,7 @@ critical values by looking at that single page.
 | `pdf2md setup` | First-time wizard (folders, languages, models, autostart, Claude wiring) |
 | `pdf2md convert <pdf or folder> [--force] [--no-move] [--no-figures]` | Convert now |
 | `pdf2md scan` | Convert everything new in the watched folders once |
+| `pdf2md progress [--live]` | How many files are converted / left, with a time estimate |
 | `pdf2md status [project]` | Watcher state and every converted document |
 | `pdf2md add-folder <folder> [--single]` | Watch a folder of projects (or one project) |
 | `pdf2md autostart install / uninstall / restart / status` | Background watcher at login |
