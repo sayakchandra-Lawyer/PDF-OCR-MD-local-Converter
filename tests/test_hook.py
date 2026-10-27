@@ -8,10 +8,10 @@ import sys
 from pathlib import Path
 
 from pdf2md.config import Config
-from pdf2md.layout import ProjectLayout
-from pdf2md.manifest import transaction
+from pdf2md.core.layout import ProjectLayout
+from pdf2md.core.manifest import transaction
 
-HOOK = Path(__file__).resolve().parents[1] / "claude-plugin" / "hooks" / "pdf_read_guard.py"
+HOOK = Path(__file__).resolve().parents[1] / "src" / "pdf2md" / "claude_plugin" / "hooks" / "pdf_read_guard.py"
 
 
 def run_hook(payload: dict) -> dict | None:

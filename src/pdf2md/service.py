@@ -14,9 +14,10 @@ from typing import Callable
 
 from pdf2md import FORMAT_VERSION, __version__
 from pdf2md.config import Config
-from pdf2md.layout import FileLock, ProjectLayout, atomic_write, guess_project, iter_projects
-from pdf2md.manifest import Manifest, hash_file, now_iso, transaction
-from pdf2md.naming import render_name
+from pdf2md.core.fsutil import FileLock, atomic_write
+from pdf2md.core.layout import ProjectLayout, guess_project, iter_projects
+from pdf2md.core.manifest import Manifest, hash_file, now_iso, transaction
+from pdf2md.core.naming import render_name
 
 log = logging.getLogger("pdf2md")
 
@@ -70,7 +71,7 @@ class Service:
     @property
     def converter(self):
         if self._converter is None:
-            from pdf2md.converter import Converter
+            from pdf2md.engine.converter import Converter
 
             self._converter = Converter(self.cfg)
         return self._converter

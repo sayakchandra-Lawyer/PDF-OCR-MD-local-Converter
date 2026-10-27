@@ -9,13 +9,13 @@ from pathlib import Path
 import pytest
 
 from pdf2md.config import Config, dump_config, load_config
-from pdf2md.layout import ProjectLayout, find_project, guess_project, resolve_user_path
-from pdf2md.manifest import Manifest, transaction
-from pdf2md.mcp_server import select_pages
-from pdf2md.naming import clean_stem, render_name
-from pdf2md.pdfinspect import PageInfo, classify, page_runs
+from pdf2md.core.layout import ProjectLayout, find_project, guess_project, resolve_user_path
+from pdf2md.core.manifest import Manifest, transaction
+from pdf2md.integrations.mcp_server import select_pages
+from pdf2md.core.naming import clean_stem, render_name
+from pdf2md.engine.pdfinspect import PageInfo, classify, page_runs
 from pdf2md.service import Service, page_ranges
-from pdf2md import vision
+from pdf2md.engine import vision
 
 
 # ------------------------------------------------------------------ naming

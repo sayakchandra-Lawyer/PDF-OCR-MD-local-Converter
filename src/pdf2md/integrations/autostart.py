@@ -109,7 +109,7 @@ def stop() -> None:
 def unload_models() -> None:
     """Ask Ollama to free the vision model's memory now instead of after keep_alive."""
     from pdf2md.config import load_config
-    from pdf2md.ollama import OllamaClient, OllamaError
+    from pdf2md.engine.ollama import OllamaClient, OllamaError
 
     cfg = load_config()
     client = OllamaClient(cfg.llm.ollama_url, timeout=15)

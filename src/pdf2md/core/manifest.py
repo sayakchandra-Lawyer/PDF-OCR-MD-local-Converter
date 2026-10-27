@@ -7,7 +7,8 @@ from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path, PurePosixPath
 
-from pdf2md.layout import FileLock, ProjectLayout, atomic_write
+from pdf2md.core.fsutil import FileLock, atomic_write
+from pdf2md.core.layout import ProjectLayout
 
 STATUS_LABEL = {
     "done": "done",

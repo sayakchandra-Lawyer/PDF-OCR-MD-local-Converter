@@ -7,7 +7,7 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 
-from pdf2md.ollama import OllamaClient, OllamaError
+from pdf2md.engine.ollama import OllamaClient, OllamaError
 
 LANGUAGE_NAMES = {
     "en": "English", "hi": "Hindi", "bn": "Bengali", "mr": "Marathi", "ta": "Tamil",
@@ -91,16 +91,16 @@ def looks_degenerate(text: str) -> bool:
     return False
 
 
-def _tokens(text: str) -> set[str]:
+def tokens(text: str) -> set[str]:
     return {t for t in re.findall(r"\w+", text.lower()) if len(t) > 1 or t.isdigit()}
 
 
 def recall(baseline: str, candidate: str) -> float:
     """Share of the classical-OCR vocabulary that the candidate also contains."""
-    base = _tokens(baseline)
+    base = tokens(baseline)
     if not base:
         return 1.0
-    return len(base & _tokens(candidate)) / len(base)
+    return len(base & tokens(candidate)) / len(base)
 
 
 def transcribe_page(client: OllamaClient, model: str, png: bytes, languages: list[str]) -> str:

@@ -13,8 +13,8 @@ import time
 from pathlib import Path
 
 from pdf2md.config import Config, load_config
-from pdf2md.layout import find_project, guess_project, iter_projects, resolve_user_path
-from pdf2md.manifest import Manifest
+from pdf2md.core.layout import find_project, guess_project, iter_projects, resolve_user_path
+from pdf2md.core.manifest import Manifest
 from pdf2md.service import DocResult, Service
 
 INSTRUCTIONS = """Local PDF -> Markdown converter (runs entirely on the user's machine).
@@ -240,7 +240,7 @@ def build_server(cfg: Config | None = None):
     @server.tool()
     async def converter_status() -> str:
         """Health check: local vision model (Ollama), OCR engine, watched folders and the background watcher."""
-        from pdf2md.converter import pick_ocr_engine
+        from pdf2md.engine.ocr import pick_ocr_engine
         from pdf2md.watcher import watcher_state
 
         vs = await asyncio.to_thread(service.converter.vision_status)

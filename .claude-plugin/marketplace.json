@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "pdf-markdown-first",
-      "source": "./claude-plugin",
+      "source": "./src/pdf2md/claude_plugin",
       "description": "Read locally converted Markdown instead of PDFs (skill + read hook).",
       "version": "0.1.0"
     }

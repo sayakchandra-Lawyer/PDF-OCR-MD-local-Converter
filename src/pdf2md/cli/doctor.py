@@ -9,7 +9,6 @@ import platform
 import shutil
 import subprocess
 import sys
-from pathlib import Path
 
 from pdf2md.config import CONFIG_PATH, Config
 
@@ -49,9 +48,9 @@ def suggested_vision_model() -> str:
 
 
 def run_doctor(cfg: Config) -> int:
-    from pdf2md.autostart import status as autostart_status
-    from pdf2md.converter import pick_ocr_engine
-    from pdf2md.ollama import OllamaClient
+    from pdf2md.integrations.autostart import status as autostart_status
+    from pdf2md.engine.ocr import pick_ocr_engine
+    from pdf2md.engine.ollama import OllamaClient
 
     problems = 0
 
@@ -79,7 +78,7 @@ def run_doctor(cfg: Config) -> int:
     line(ver is not None, f"Ollama at {cfg.llm.ollama_url}: {'version ' + ver if ver else 'not reachable - install/start Ollama'}")
     if ver:
         line(client.has_model(cfg.llm.vision_model), f"figure model {cfg.llm.vision_model}"
-             + ("" if client.has_model(cfg.llm.vision_model) else f"  ->  pdf2md models pull"))
+             + ("" if client.has_model(cfg.llm.vision_model) else "  ->  pdf2md models pull"))
         if cfg.llm.page_model != cfg.llm.vision_model:
             line(client.has_model(cfg.llm.page_model), f"scanned-page model {cfg.llm.page_model}")
 
@@ -104,7 +103,7 @@ def run_doctor(cfg: Config) -> int:
         print(f"      {s}")
 
     print("\nClaude integration")
-    from pdf2md.claude_setup import desktop_config_paths
+    from pdf2md.integrations.claude import desktop_config_paths
 
     for path in desktop_config_paths():
         has = False

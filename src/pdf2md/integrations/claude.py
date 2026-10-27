@@ -12,8 +12,8 @@ import time
 import zipfile
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-PLUGIN_DIR = REPO_ROOT / "claude-plugin"
+# Shipped inside the package so release builds (wheel / Windows installer) carry it too.
+PLUGIN_DIR = Path(__file__).resolve().parents[1] / "claude_plugin"
 
 GLOBAL_INSTRUCTIONS = """PDF files: my PDFs are converted to Markdown locally by "pdf2md" so you never have to spend tokens reading a PDF.
 Before reading any PDF in my folders: find the `.pdf2md.json` file at the project folder's root, open the INDEX.md in the Markdown folder it names (usually MD/ or 01_Context/MD/), and read the matching .md file instead of the PDF. The Markdown has page markers (<!-- page N -->), tables as Markdown tables and text descriptions with data for charts and figures.
@@ -75,7 +75,7 @@ def install_claude_code_mcp() -> str:
 
 def build_plugin_zip(out_dir: Path) -> Path:
     if not (PLUGIN_DIR / ".claude-plugin" / "plugin.json").exists():
-        raise FileNotFoundError(f"Plugin folder not found at {PLUGIN_DIR}; run from a clone of the repository.")
+        raise FileNotFoundError(f"Plugin folder not found at {PLUGIN_DIR}; reinstall pdf2md.")
     out_dir.mkdir(parents=True, exist_ok=True)
     version = json.loads((PLUGIN_DIR / ".claude-plugin/plugin.json").read_text())["version"]
     out = out_dir / f"pdf-markdown-first-{version}.zip"
@@ -85,14 +85,3 @@ def build_plugin_zip(out_dir: Path) -> Path:
                 z.write(f, f.relative_to(PLUGIN_DIR).as_posix())
     return out
 
-
-def build_skill_zip(out_dir: Path) -> Path:
-    """Skill-only package (Settings > Capabilities > Skills upload)."""
-    skill = PLUGIN_DIR / "skills" / "pdf-markdown-first"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out = out_dir / "pdf-markdown-first-skill.zip"
-    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
-        for f in sorted(skill.rglob("*")):
-            if f.is_file():
-                z.write(f, (Path("pdf-markdown-first") / f.relative_to(skill)).as_posix())
-    return out

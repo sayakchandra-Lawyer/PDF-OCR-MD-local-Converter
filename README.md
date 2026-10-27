@@ -291,8 +291,21 @@ pytest -m "not slow"                            # fast unit tests
 pytest                                          # + end-to-end Docling runs with a fake Ollama server
 ```
 
-Layout: `src/pdf2md/` (converter, service, watcher, MCP server, CLI), `claude-plugin/` (Cowork/Claude Code
-plugin), `.claude-plugin/marketplace.json` (lets this repo act as a plugin marketplace), `scripts/` (installers).
+Code layout:
+
+```
+src/pdf2md/
+├── config.py            settings (~/.pdf2md/config.toml)
+├── service.py           organise a PDF into its project, convert once, keep the index up to date
+├── watcher.py           background watcher (folder events + periodic rescan)
+├── core/                folders, naming, manifest / INDEX.md, safe file writes and locks
+├── engine/              pdfinspect -> Docling (ocr.py) -> vision.py / ollama.py -> figures.py -> markdown.py
+├── integrations/        MCP server, Claude Desktop / Code wiring, autostart at login
+├── cli/                 one module per group of commands
+└── claude_plugin/       the Cowork / Claude Code plugin (skill + read hook), shipped inside the package
+```
+
+`.claude-plugin/marketplace.json` lets this repository act as a plugin marketplace.
 
 ## License
 

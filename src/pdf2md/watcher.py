@@ -11,7 +11,8 @@ import time
 from pathlib import Path
 
 from pdf2md.config import WATCHER_STATE, Config
-from pdf2md.layout import atomic_write, find_project, iter_projects
+from pdf2md.core.fsutil import atomic_write
+from pdf2md.core.layout import find_project, iter_projects
 from pdf2md.service import Service
 
 log = logging.getLogger("pdf2md")
