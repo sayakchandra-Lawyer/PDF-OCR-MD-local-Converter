@@ -1,8 +1,18 @@
 # PDF-OCR-MD-local-Converter (`pdf2md`)
 
+[![Download latest release](https://img.shields.io/github/v/release/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter?label=download&style=for-the-badge)](https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter/releases/latest)
+[![tests](https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter/actions/workflows/tests.yml/badge.svg)](https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter/actions/workflows/tests.yml)
+
 Convert the PDFs you give Claude **once, on your own computer**, into clean Markdown that Claude Cowork
 reads instead of the PDF. That includes OCR for scanned pages, real tables, and charts turned into text plus data. It saves tokens
 on every later read and keeps your documents private.
+
+> **⬇️ Download:** go to the **[latest release page](https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter/releases/latest)**.
+> - **Windows:** download and run `pdf2md-setup-<version>.exe` (one-click installer).
+> - **Claude plugin:** download `pdf-markdown-first-<version>.zip` and upload it in Claude Desktop > Customize > Plugins.
+> - **macOS / Linux:** see [Install](#install) below.
+>
+> All versions: [Releases](https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter/releases)
 
 - **High-quality OCR, fully local.** Scanned pages are transcribed by a local vision LLM (Qwen3-VL via
   [Ollama](https://ollama.com)) and **cross-checked** against classical OCR (Apple Vision on macOS,
