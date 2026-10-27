@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pdf-ocr-md-local-converter"
-version = "0.1.0"
+version = "0.1.1"
 description = "Local, private PDF -> Markdown converter (OCR, tables, charts) so Claude Cowork reads cheap Markdown instead of PDFs."
 readme = "README.md"
 license = { text = "MIT" }

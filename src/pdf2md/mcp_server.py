@@ -13,7 +13,7 @@ import time
 from pathlib import Path
 
 from pdf2md.config import Config, load_config
-from pdf2md.layout import guess_project, iter_projects, resolve_user_path
+from pdf2md.layout import find_project, guess_project, iter_projects, resolve_user_path
 from pdf2md.manifest import Manifest
 from pdf2md.service import DocResult, Service
 
@@ -160,8 +160,14 @@ def build_server(cfg: Config | None = None):
                 f"PDF not found on this machine: {pdf_path}. Make sure it is inside a folder pdf2md watches "
                 "(see converter_status) or pass the full local path."
             )
+        wait = max(1, min(wait_seconds, 300))
+        layout = find_project(pdf, cfg)
+        if not force and layout is not None and _watcher_alive():
+            # The background watcher owns conversions in watched folders: just wait for its result,
+            # so heavy OCR never runs inside the Claude app's process.
+            return await asyncio.to_thread(_await_watcher, layout, pdf, wait, include_content, max_chars)
         job = jobs.start(pdf.resolve(), force)
-        await asyncio.to_thread(job["done"].wait, max(1, min(wait_seconds, 300)))
+        await asyncio.to_thread(job["done"].wait, wait)
         if not job["done"].is_set():
             return (
                 f"status: converting ({job['progress']}); {int(time.time() - job['t0'])}s elapsed.\n"
@@ -210,7 +216,22 @@ def build_server(cfg: Config | None = None):
         path = resolve_user_path(folder, cfg)
         if path is None or not path.is_dir():
             return f"Folder not found on this machine: {folder}"
+        parents, _ = cfg.watch_roots()
+        if path.resolve() in parents:
+            return (
+                f"{path} is the folder that holds all project folders; convert one project folder at a time "
+                "(the background watcher already handles every project in it)."
+            )
         layout = guess_project(path / "x.pdf", cfg)
+        if find_project(path / "x.pdf", cfg) is not None and _watcher_alive():
+            m = Manifest.load(layout)
+            counts: dict[str, int] = {}
+            for e in m.docs.values():
+                counts[e.get("status", "?")] = counts.get(e.get("status", "?"), 0) + 1
+            return (
+                f"The background watcher converts PDFs in {layout.root} automatically. Current status: "
+                f"{counts or 'nothing recorded yet'}. Use list_converted(project='{layout.name}') to follow progress."
+            )
         pdfs = list(layout.iter_pdfs())
         for p in pdfs:
             jobs.start(p.resolve(), force)
@@ -239,6 +260,40 @@ def build_server(cfg: Config | None = None):
         )
 
     return server
+
+
+def _watcher_alive() -> bool:
+    from pdf2md.watcher import watcher_state
+
+    st = watcher_state()
+    return bool(st and st.get("alive"))
+
+
+def _await_watcher(layout, pdf: Path, wait: float, include_content: bool, max_chars: int) -> str:
+    """Poll the project manifest until the watcher has converted `pdf` (it may also move it)."""
+    original_rel = layout.rel(pdf)
+    deadline = time.monotonic() + wait
+    entry = None
+    while True:
+        hit = Manifest.load(layout).find(original_rel)
+        rel, entry = hit if hit else (None, None)
+        status = (entry or {}).get("status")
+        md = layout.root / entry["md"] if entry and entry.get("md") else None
+        if status == "done" and md and md.is_file():
+            res = DocResult("cached", layout.root / rel, md, layout, "converted by the background watcher", entry)
+            return _describe(res, include_content, max_chars)
+        if status == "failed":
+            return f"status: failed\nerror: {entry.get('error')}\nRetry with pdf_to_markdown(force=true)."
+        if time.monotonic() >= deadline:
+            from pdf2md.watcher import watcher_state
+
+            current = (watcher_state() or {}).get("current") or "waiting in queue"
+            return (
+                f"status: {status or 'queued'} - the background converter is working on it ({current}).\n"
+                "Scanned pages and the first run after installation are slow. Call pdf_to_markdown again "
+                "with the same path in a minute to collect the result; this does not restart anything."
+            )
+        time.sleep(2)
 
 
 def _find(cfg: Config, query: str):

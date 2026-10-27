@@ -99,7 +99,6 @@ pdf2md doctor
 1. **Plugin.** In Claude Desktop open **Customize > Plugins > Upload** and pick
    `pdf-markdown-first-0.1.0.zip` from your Desktop. If you prefer, **Add marketplace** with
    `sayakchandra-Lawyer/PDF-OCR-MD-local-Converter` and install *pdf-markdown-first* from it.
-   For a skill without the hook, upload `pdf-markdown-first-skill.zip` under **Settings > Capabilities > Skills**.
 2. **Global instructions.** Paste the text printed by `pdf2md claude instructions` into
    **Settings > General > Instructions for Claude**.
 3. **Restart Claude Desktop** so it loads the MCP server.

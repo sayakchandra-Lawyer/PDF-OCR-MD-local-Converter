@@ -202,8 +202,7 @@ def cmd_claude(args, cfg: Config) -> int:
     elif args.action == "plugin-zip":
         out = Path(args.out).expanduser() if args.out else Path.cwd()
         print(f"Cowork plugin: {cs.build_plugin_zip(out)}")
-        print(f"Skill only:    {cs.build_skill_zip(out)}")
-        print("Upload in Claude Desktop: Customize > Plugins > Upload (or Settings > Capabilities > Skills).")
+        print("Upload it in Claude Desktop: Customize > Plugins > Upload.")
     elif args.action == "instructions":
         print(cs.GLOBAL_INSTRUCTIONS)
     return 0

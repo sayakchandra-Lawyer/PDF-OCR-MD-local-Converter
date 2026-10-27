@@ -92,7 +92,15 @@ def run_doctor(cfg: Config) -> int:
         line(ok, f"{p}" + ("" if ok else "  (missing or not writable - on macOS grant Full Disk Access to Python)"))
 
     print("\nBackground watcher")
-    for s in autostart_status().splitlines():
+    from pdf2md.watcher import watcher_state
+
+    st = watcher_state()
+    status_text = autostart_status()
+    line("not installed" not in status_text.splitlines()[0], "autostart at login"
+         + ("" if "not installed" not in status_text.splitlines()[0] else "  ->  pdf2md autostart install"))
+    line(bool(st and st.get("alive")), "watcher running"
+         + ("" if st and st.get("alive") else "  ->  pdf2md autostart restart"))
+    for s in status_text.splitlines()[2:]:
         print(f"      {s}")
 
     print("\nClaude integration")
