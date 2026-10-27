@@ -106,8 +106,25 @@ def stop() -> None:
             os.kill(int(st["pid"]), signal.SIGTERM)
 
 
+def unload_models() -> None:
+    """Ask Ollama to free the vision model's memory now instead of after keep_alive."""
+    from pdf2md.config import load_config
+    from pdf2md.ollama import OllamaClient, OllamaError
+
+    cfg = load_config()
+    client = OllamaClient(cfg.llm.ollama_url, timeout=15)
+    if not client.available():
+        return
+    for model in {cfg.llm.vision_model, cfg.llm.page_model}:
+        try:
+            client._request("POST", "/api/generate", {"model": model, "keep_alive": 0}, timeout=15)
+        except OllamaError:
+            pass
+
+
 def uninstall() -> str:
     stop()
+    unload_models()
     removed = []
     for p in (_mac_plist(), _win_startup(), _linux_unit()):
         if p.exists():
