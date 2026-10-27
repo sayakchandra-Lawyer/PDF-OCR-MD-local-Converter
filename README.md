@@ -54,26 +54,29 @@ Several layers steer Claude to the Markdown. Any one of them is enough, and toge
 You need about 10 GB of free disk space: roughly 2 GB for Python packages and OCR/layout models, and 2-6 GB for the
 vision model. Apple Silicon Macs and PCs with an NVIDIA GPU are fastest, but the tool also works on CPU only.
 
+**Windows (recommended): one-click installer**
+
+1. Download `pdf2md-setup-<version>.exe` from the
+   [latest release](https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter/releases/latest).
+2. Run it. The installer is not code-signed, so if Windows SmartScreen warns, click **More info > Run anyway**.
+   No admin rights are needed.
+3. A window opens. It installs the conversion engine and Ollama, then runs the setup questions. Leave it open until it says
+   *pdf2md is installed*.
+
+The Start menu gets a **pdf2md** folder with shortcuts: *Conversion progress*, *Check installation*, *Setup*,
+*Update* and *Logs folder*.
+
+**macOS / Linux, or Windows from source**
+
 ```bash
 git clone https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter.git
 cd PDF-OCR-MD-local-Converter
+./scripts/install_mac.sh                                              # macOS
+./scripts/install_linux.sh                                            # Linux (Claude Code)
+powershell -ExecutionPolicy Bypass -File scripts\install_windows.ps1  # Windows, editable install
 ```
 
-**macOS**
-
-```bash
-./scripts/install_mac.sh
-```
-
-**Windows** (PowerShell)
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\install_windows.ps1
-```
-
-**Linux** (for Claude Code): `./scripts/install_linux.sh`
-
-Each installer:
+Each installer (including the one-click one):
 
 1. installs [uv](https://docs.astral.sh/uv/) plus a private Python 3.12 in `~/.pdf2md/venv` (no admin rights needed);
 2. installs pdf2md (Docling, RapidOCR, Apple Vision OCR on macOS, watchdog, MCP SDK);
@@ -93,6 +96,17 @@ Then check everything with:
 ```bash
 pdf2md doctor
 ```
+
+### Updating
+
+```bash
+pdf2md update            # installs the newest release (or runs git pull for a source install)
+pdf2md update --check    # only checks
+```
+
+You can also run a newer `pdf2md-setup-<version>.exe` over the old one. Settings, logs and converted files are kept, and
+the background converter restarts by itself. When the plugin changes, a new zip is placed on your Desktop for you to upload
+again under **Customize > Plugins**.
 
 ### Finish the Claude side (2 minutes, once)
 
@@ -232,6 +246,7 @@ critical values by looking at that single page.
 | `pdf2md models pull / list` | Download / list the Ollama vision models |
 | `pdf2md claude install-mcp / plugin-zip / instructions` | Claude Desktop MCP entry, Cowork plugin zip, instructions text |
 | `pdf2md doctor` | Check the whole installation |
+| `pdf2md update [--check]` | Install the newest release |
 | `pdf2md watch` | Run the watcher in the foreground (for debugging) |
 | `pdf2md mcp [--http]` | MCP server (started by Claude; `--http` serves on 127.0.0.1:8765) |
 
@@ -290,6 +305,20 @@ python tests/fixtures/make_fixtures.py          # sample digital + scanned PDFs
 pytest -m "not slow"                            # fast unit tests
 pytest                                          # + end-to-end Docling runs with a fake Ollama server
 ```
+
+### Releases
+
+The version lives in `src/pdf2md/__init__.py`, and `scripts/build.py` keeps the plugin manifests in step with it.
+
+```bash
+python scripts/build.py --set-version 0.3.0     # bump everywhere
+python scripts/build.py                         # local build into dist/: wheel, sdist, plugin zip, checksums
+git commit -am "Release 0.3.0" && git tag v0.3.0 && git push origin main v0.3.0
+```
+
+Pushing the tag runs `.github/workflows/release.yml`. It builds the wheel and plugin zip, builds the Windows installer
+with Inno Setup (`packaging/windows/`), test-installs it on a Windows runner, and publishes everything as a GitHub
+Release. `pdf2md update` installs from these releases.
 
 Code layout:
 

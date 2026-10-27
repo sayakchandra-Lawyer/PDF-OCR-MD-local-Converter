@@ -12,7 +12,7 @@ import sys
 
 from pdf2md import __version__
 from pdf2md.cli.convert import cmd_convert, cmd_scan, cmd_watch
-from pdf2md.cli.integration import cmd_autostart, cmd_claude, cmd_doctor, cmd_mcp
+from pdf2md.cli.integration import cmd_autostart, cmd_claude, cmd_doctor, cmd_mcp, cmd_update
 from pdf2md.cli.logs import setup_logging
 from pdf2md.cli.monitor import cmd_progress, cmd_status
 from pdf2md.cli.settings import cmd_add_folder, cmd_config, cmd_models, cmd_remove_folder
@@ -81,6 +81,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--http", action="store_true", help="streamable HTTP on 127.0.0.1 instead of stdio")
     s.add_argument("--port", type=int, default=8765)
     s.set_defaults(func=cmd_mcp)
+
+    s = sub.add_parser("update", help="install the newest release (or git pull for a clone)")
+    s.add_argument("--check", action="store_true", help="only check whether an update exists")
+    s.set_defaults(func=cmd_update)
 
     s = sub.add_parser("config", help="show the configuration file")
     s.set_defaults(func=cmd_config)

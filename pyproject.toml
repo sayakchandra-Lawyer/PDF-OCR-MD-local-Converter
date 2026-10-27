@@ -1,13 +1,14 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pdf-ocr-md-local-converter"
-version = "0.1.1"
+dynamic = ["version"]
 description = "Local, private PDF -> Markdown converter (OCR, tables, charts) so Claude Cowork reads cheap Markdown instead of PDFs."
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10,<3.14"
 authors = [{ name = "Sayak Chandra" }]
 dependencies = [
@@ -24,13 +25,28 @@ dependencies = [
 [project.optional-dependencies]
 tesseract = ["tesserocr>=2.7"]
 easyocr = ["easyocr>=1.7"]
-dev = ["pytest>=8", "reportlab>=4", "matplotlib>=3.8"]
+dev = ["pytest>=8", "reportlab>=4", "matplotlib>=3.8", "build>=1.2", "ruff>=0.6"]
 
 [project.scripts]
 pdf2md = "pdf2md.cli:main"
 
+[project.urls]
+Homepage = "https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter"
+Releases = "https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter/releases"
+
+[tool.setuptools.dynamic]
+# Single source of truth for the version; scripts/build.py keeps the plugin manifests in step.
+version = { attr = "pdf2md.__version__" }
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+pdf2md = [
+    "claude_plugin/.claude-plugin/*.json",
+    "claude_plugin/hooks/*",
+    "claude_plugin/skills/*/*",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

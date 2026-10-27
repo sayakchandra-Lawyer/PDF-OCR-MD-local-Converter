@@ -13,4 +13,6 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -e ".[dev]"
+      - run: python scripts/build.py --check
+      - run: ruff check --select F,E9 src tests scripts
       - run: python -m pytest -m "not slow" -q

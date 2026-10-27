@@ -45,3 +45,9 @@ def cmd_mcp(args, cfg: Config) -> int:
 
     run(http=args.http, port=args.port)
     return 0
+
+
+def cmd_update(args, cfg: Config) -> int:
+    from pdf2md.integrations.updates import run_update
+
+    return run_update(check_only=args.check)

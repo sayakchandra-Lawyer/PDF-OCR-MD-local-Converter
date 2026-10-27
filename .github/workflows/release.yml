@@ -1,0 +1,110 @@
+name: release
+
+# Tag a version to publish a GitHub Release:
+#   python scripts/build.py --set-version X.Y.Z  &&  git commit -am "Release X.Y.Z"
+#   git tag vX.Y.Z  &&  git push origin main vX.Y.Z
+# Pushes to main that touch packaging also run the build + installer test (without publishing).
+on:
+  push:
+    tags: ["v*"]
+    branches: [main]
+    paths:
+      - "packaging/**"
+      - "scripts/build.py"
+      - "pyproject.toml"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - id: version
+        run: echo "version=$(python -c "import re;print(re.search(r'__version__ = \"(.+)\"', open('src/pdf2md/__init__.py').read()).group(1))")" >> "$GITHUB_OUTPUT"
+      - name: Tag must match the package version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: test "v${{ steps.version.outputs.version }}" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME != version ${{ steps.version.outputs.version }}"; exit 1; }
+      - run: python scripts/build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  windows-installer:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Fetch uv.exe to bundle
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://github.com/astral-sh/uv/releases/latest/download/uv-x86_64-pc-windows-msvc.zip -OutFile uv.zip
+          Expand-Archive uv.zip -DestinationPath uvtmp
+          Copy-Item (Get-ChildItem uvtmp -Recurse -Filter uv.exe | Select-Object -First 1).FullName packaging/windows/uv.exe
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
+          $wheel = (Get-ChildItem dist -Filter *.whl).Name
+          & $iscc "/DAppVersion=${{ needs.build.outputs.version }}" "/DWheelName=$wheel" packaging/windows/pdf2md.iss
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Get-ChildItem dist
+      - name: Test the installer (silent install + unattended bootstrap)
+        shell: pwsh
+        run: |
+          $setup = (Get-ChildItem dist -Filter pdf2md-setup-*.exe).FullName
+          Start-Process $setup -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -Wait
+          $app = Join-Path $env:LOCALAPPDATA "Programs\pdf2md"
+          Get-ChildItem $app
+          $wheel = (Get-ChildItem $app -Filter *.whl).FullName
+          & powershell -NoProfile -ExecutionPolicy Bypass -File "$app\bootstrap.ps1" -Source $wheel -Uv "$app\uv.exe" -Unattended -SkipOllama -NoPause
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          $exe = Join-Path $env:USERPROFILE ".pdf2md\venv\Scripts\pdf2md.exe"
+          & $exe --version
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          & $exe claude plugin-zip --out "$env:RUNNER_TEMP"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          & $exe autostart uninstall
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: dist/pdf2md-setup-*.exe
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, windows-installer]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Checksums
+        run: cd artifacts && rm -f SHA256SUMS.txt && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v="${{ needs.build.outputs.version }}"
+          cat > notes.md <<EOF
+          **Windows:** download \`pdf2md-setup-$v.exe\` and run it (if SmartScreen warns, click *More info > Run anyway*; the installer is not code-signed).
+          **Claude plugin:** upload \`pdf-markdown-first-$v.zip\` in Claude Desktop > Customize > Plugins.
+          **Already installed?** Run \`pdf2md update\`.
+          EOF
+          gh release create "$GITHUB_REF_NAME" artifacts/* --repo "$GITHUB_REPOSITORY" \
+            --title "pdf2md $v" --notes-file notes.md --generate-notes
