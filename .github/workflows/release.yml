@@ -103,7 +103,7 @@ jobs:
           v="${{ needs.build.outputs.version }}"
           cat > notes.md <<EOF
           **Windows:** download \`pdf2md-setup-$v.exe\` and run it (if SmartScreen warns, click *More info > Run anyway*; the installer is not code-signed).
-          **Claude plugin:** upload \`pdf-markdown-first-$v.zip\` in Claude Desktop > Customize > Plugins.
+          **Claude plugin:** upload \`pdf-ocr-md-local-converter-$v.zip\` in Claude Desktop > Customize > Plugins.
           **Already installed?** Run \`pdf2md update\`.
           EOF
           gh release create "$GITHUB_REF_NAME" artifacts/* --repo "$GITHUB_REPOSITORY" \

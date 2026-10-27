@@ -7,7 +7,7 @@
 Artefacts (all versioned):
     pdf_ocr_md_local_converter-<v>-py3-none-any.whl   Python package (what installers install)
     pdf_ocr_md_local_converter-<v>.tar.gz             source package
-    pdf-markdown-first-<v>.zip                         Claude Cowork plugin (Customize > Plugins > Upload)
+    pdf-ocr-md-local-converter-<v>.zip                 Claude Cowork plugin (Customize > Plugins > Upload)
     SHA256SUMS.txt
 The Windows installer (packaging/windows) is built from these in CI.
 """
@@ -35,6 +35,8 @@ REQUIRED_IN_WHEEL = [
     "pdf2md/claude_plugin/hooks/hooks.json",
     "pdf2md/claude_plugin/hooks/pdf_read_guard.py",
     "pdf2md/claude_plugin/skills/pdf-markdown-first/SKILL.md",
+    "pdf2md/claude_plugin/README.md",
+    "pdf2md/claude_plugin/LICENSE",
 ]
 
 

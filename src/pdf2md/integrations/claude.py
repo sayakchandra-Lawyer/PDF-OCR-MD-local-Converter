@@ -77,8 +77,8 @@ def build_plugin_zip(out_dir: Path) -> Path:
     if not (PLUGIN_DIR / ".claude-plugin" / "plugin.json").exists():
         raise FileNotFoundError(f"Plugin folder not found at {PLUGIN_DIR}; reinstall pdf2md.")
     out_dir.mkdir(parents=True, exist_ok=True)
-    version = json.loads((PLUGIN_DIR / ".claude-plugin/plugin.json").read_text())["version"]
-    out = out_dir / f"pdf-markdown-first-{version}.zip"
+    manifest = json.loads((PLUGIN_DIR / ".claude-plugin/plugin.json").read_text())
+    out = out_dir / f"{manifest['name']}-{manifest['version']}.zip"
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for f in sorted(PLUGIN_DIR.rglob("*")):
             if f.is_file() and "__pycache__" not in f.parts:

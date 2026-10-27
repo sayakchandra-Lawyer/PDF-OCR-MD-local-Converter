@@ -9,7 +9,7 @@ on every later read and keeps your documents private.
 
 > **⬇️ Download:** go to the **[latest release page](https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter/releases/latest)**.
 > - **Windows:** download and run `pdf2md-setup-<version>.exe` (one-click installer).
-> - **Claude plugin:** download `pdf-markdown-first-<version>.zip` and upload it in Claude Desktop > Customize > Plugins.
+> - **Claude plugin:** download `pdf-ocr-md-local-converter-<version>.zip` and upload it in Claude Desktop > Customize > Plugins.
 > - **macOS / Linux:** see [Install](#install) below.
 >
 > All versions: [Releases](https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter/releases)
@@ -53,7 +53,7 @@ Several layers steer Claude to the Markdown. Any one of them is enough, and toge
 |---|---|---|
 | Background watcher | Converts every new/changed PDF in your project folders automatically | your computer (autostart) |
 | `CLAUDE.md` block + `INDEX.md` | Each project tells Claude "read `MD/…`, not the PDF" | written into every project folder |
-| Cowork plugin `pdf-markdown-first` | Skill with the workflow + a hook that redirects a PDF read to its `.md` | Claude Desktop > Customize > Plugins |
+| Cowork plugin `pdf-ocr-md-local-converter` | Skill with the workflow + a hook that redirects a PDF read to its `.md` | Claude Desktop > Customize > Plugins |
 | Global instructions | The same rule for every chat and Cowork task | Settings > General > Instructions for Claude |
 | MCP server (optional) | `pdf_to_markdown`, `read_markdown`, `list_converted` tools | Claude Desktop / Claude Code |
 
@@ -121,8 +121,8 @@ again under **Customize > Plugins**.
 ### Finish the Claude side (2 minutes, once)
 
 1. **Plugin.** In Claude Desktop open **Customize > Plugins > Upload** and pick
-   `pdf-markdown-first-0.1.0.zip` from your Desktop. If you prefer, **Add marketplace** with
-   `sayakchandra-Lawyer/PDF-OCR-MD-local-Converter` and install *pdf-markdown-first* from it.
+   `pdf-ocr-md-local-converter-<version>.zip` from your Desktop. If you prefer, **Add marketplace** with
+   `sayakchandra-Lawyer/PDF-OCR-MD-local-Converter` and install *pdf-ocr-md-local-converter* from it.
 2. **Global instructions.** Paste the text printed by `pdf2md claude instructions` into
    **Settings > General > Instructions for Claude**.
 3. **Restart Claude Desktop** so it loads the MCP server.

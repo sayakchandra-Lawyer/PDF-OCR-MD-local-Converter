@@ -38,7 +38,7 @@ def latest_release() -> dict:
         "page": data.get("html_url", RELEASES_PAGE),
         "wheel": pick(lambda n: n.endswith(".whl")),
         "installer": pick(lambda n: n.lower().endswith(".exe")),
-        "plugin": pick(lambda n: n.startswith("pdf-markdown-first-") and n.endswith(".zip")),
+        "plugin": pick(lambda n: n.endswith(".zip")),
     }
 
 

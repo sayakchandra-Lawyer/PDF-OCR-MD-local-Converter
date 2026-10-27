@@ -8,10 +8,10 @@
   },
   "plugins": [
     {
-      "name": "pdf-markdown-first",
+      "name": "pdf-ocr-md-local-converter",
       "source": "./src/pdf2md/claude_plugin",
       "description": "Read locally converted Markdown instead of PDFs (skill + read hook).",
-      "version": "0.2.0"
+      "version": "0.2.1"
     }
   ]
 }

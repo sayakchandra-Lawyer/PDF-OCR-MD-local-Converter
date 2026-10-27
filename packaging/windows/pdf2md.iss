@@ -1,7 +1,7 @@
 ; Inno Setup script for the pdf2md Windows installer.
 ; Built by .github/workflows/release.yml:
 ;   ISCC.exe /DAppVersion=0.2.0 /DWheelName=pdf_ocr_md_local_converter-0.2.0-py3-none-any.whl packaging\windows\pdf2md.iss
-; Expects in dist\ : the wheel and pdf-markdown-first-<version>.zip (python scripts/build.py)
+; Expects in dist\ : the wheel and pdf-ocr-md-local-converter-<version>.zip (python scripts/build.py)
 ; and packaging\windows\uv.exe (downloaded by the workflow).
 
 #ifndef AppVersion
@@ -43,7 +43,7 @@ FinishedLabel=pdf2md is installed.%n%nThe background converter now turns new PDF
 
 [Files]
 Source: "..\..\dist\{#WheelName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\dist\pdf-markdown-first-{#AppVersion}.zip"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\dist\pdf-ocr-md-local-converter-{#AppVersion}.zip"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bootstrap.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "uv.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\README.md"; DestDir: "{app}"; Flags: ignoreversion isreadme

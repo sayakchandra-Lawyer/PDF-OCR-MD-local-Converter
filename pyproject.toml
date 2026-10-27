@@ -44,8 +44,11 @@ where = ["src"]
 [tool.setuptools.package-data]
 pdf2md = [
     "claude_plugin/.claude-plugin/*.json",
+    "claude_plugin/.claude-plugin/*.png",
     "claude_plugin/hooks/*",
     "claude_plugin/skills/*/*",
+    "claude_plugin/README.md",
+    "claude_plugin/LICENSE",
 ]
 
 [tool.pytest.ini_options]

@@ -1,16 +1,21 @@
 {
-  "name": "pdf-markdown-first",
-  "version": "0.2.0",
-  "description": "Makes Claude read the local Markdown conversions made by pdf2md (PDF-OCR-MD-local-Converter) instead of spending tokens on PDFs.",
+  "name": "pdf-ocr-md-local-converter",
+  "displayName": "PDF-OCR-MD Local Converter",
+  "version": "0.2.1",
+  "description": "Makes Claude read the local Markdown versions of your PDFs (made on your own computer by the pdf2md converter: OCR, tables, chart data) instead of spending tokens on the PDFs.",
   "author": {
-    "name": "Sayak Chandra"
+    "name": "Sayak Chandra",
+    "url": "https://github.com/sayakchandra-Lawyer"
   },
+  "homepage": "https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter",
+  "repository": "https://github.com/sayakchandra-Lawyer/PDF-OCR-MD-local-Converter",
   "license": "MIT",
   "keywords": [
     "pdf",
     "ocr",
     "markdown",
     "tokens",
-    "cowork"
+    "cowork",
+    "local"
   ]
 }
